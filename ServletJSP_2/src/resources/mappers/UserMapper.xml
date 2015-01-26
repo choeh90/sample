@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.andy.mysite.UserMapper">
+	<resultMap type="User" id="BasicUserMap">
+		<id column="id" jdbcType="VARCHAR" property="id" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="pass" jdbcType="VARCHAR" property="pass" />
+		<result column="email" jdbcType="VARCHAR" property="email" />
+		<result column="phone" jdbcType="VARCHAR" property="phone" />
+	</resultMap>
+
+	<insert id="createUser" parameterType="User">
+		insert into users (id, name, pass, email, phone)
+		values(#{id}, #{name}, #{pass}, #{email},#{phone})
+	</insert>
+	
+	<select id="selectUser" parameterType="string" resultMap="BasicUserMap">
+		select * from users where id=#{id}
+	</select>
+	
+	<select id="selectAllUser" resultMap="BasicUserMap">
+		select * from users
+	</select>	
+	
+	<select id="selectUserByPage" parameterType="hashmap" resultMap="BasicUserMap">
+		select * 
+			from(select a.*, rownum as rnum
+        			from(select * from users order by id ) a
+        	where rnum &lt; #{to}
+    	)where rnum &gt;= #{from};
+	</select>	
+
+	
+	<update id="updateUser" parameterType="User">
+		update users	set 
+			name=#{name}, 
+			pass=#{pass}, 
+			email=#{email}, 
+			phone=#{phone}
+		where id=#{id}
+	</update>
+
+	<delete id="deleteUser" parameterType="string">
+		delete from users where
+		id=#{id}
+	</delete>
+</mapper>
